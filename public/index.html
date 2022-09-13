@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <table>
+      <tr>
+        <td>姓名</td>
+        <td>地址</td>
+        <td>age</td>
+      </tr>
+      <tr>
+        <td>陈盼</td>
+        <td>杭州市西溪花园凌波苑301</td>
+        <td>20</td>
+      </tr>
+      <tr>
+        <td>李登权</td>
+        <td>杭州市西溪花园凌波苑1301</td>
+        <td>21</td>
+      </tr>
+    </table>
+    <div>
+      姓名：陈盼
+    </div>
+    <div id="root"></div>
+   
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+    <script>
+
+      // 观察器的配置（需要观察什么变动）
+      const config = {
+        childList: true,//子元素的变动
+        attributes: false,//属性的变动
+        characterData: true,//节点内容或节点文本的变动
+        subtree: true,//所有下属节点（包括子节点和子节点的子节点）的变动
+        // attributeFilter: ["data-dsphere"], //只有当attributes为true的时候才会触发
+        attributeOldValue: false,//要记录变动前的属性值。
+        characterDataOldValue: false,//变动前的数据值。
+      };
+
+       function handleNode(currentNode,arr,i) {
+          switch (currentNode.nodeType) {
+            case Node.TEXT_NODE: {
+              let indexText = 0
+              const node = (currentNode)
+              // if(node && node.parentNode && (node.parentNode as Element).hasAttribute('data-dsphere'))return
+              if(node.textContent.trim() && ['SCRIPT','STYLE','TEXTAREA'].indexOf(node.parentNode && node.parentNode.nodeName) === -1 && node.parentElement!== null){
+                let isContenteditable = null
+                if(!isContenteditable && node.textContent.trim().length>1){
+                  // node.parentElement && node.parentElement.setAttribute('data-dsphere','true')
+                  arr.push({toBeMatchedText:node.textContent.trim(),currentNode:node,parentNode:node.parentElement})
+                  if(node.textContent.trim()) return arr
+                }
+              }
+              break
+            }
+            case Node.ELEMENT_NODE: {
+              if (['HEAD', 'STYLE', 'SCRIPT','INPUT','PATH','STYLE','IMG','META','TITLE','TEXTAREA'].indexOf((currentNode).tagName) > -1) {
+                return
+              }
+              if((currentNode).getAttribute('data-dsphere') === 'true' || (currentNode && currentNode.parentElement && currentNode.parentElement.getAttribute('contenteditable')==='true')){
+                return
+              }
+              console.log('currentNode', currentNode)
+              currentNode.childNodes.forEach(n => {
+                handleNode(n,arr,i)
+              })
+            }
+            default: {
+              return
+            }
+          }
+        }
+
+
+      // 当观察到变动时执行的回调函数
+      const callback = function(mutationsList, observer) {
+        // Use traditional 'for loops' for IE 11
+        for(let mutation of mutationsList) {
+          if (mutation.type === 'childList') {
+            var arr = []
+            mutation.addedNodes.forEach(async e => {
+              handleNode(e, arr)
+              console.log(mutationsList)
+            })
+          }
+        }
+      };
+
+      // 创建一个观察器实例并传入回调函数
+      // const observer = new MutationObserver(callback);
+      // for (let i = 0; i < targetNode.length; i++) {
+      //   // 以上述配置开始观察目标节点
+      //   observer.observe(targetNode[i], config);
+      // }
+      // const html = document.querySelector('html')
+      // observer.observe(html, config);
+
+      // window.onload = (e) => {
+      //   const table = document.querySelector('table')
+      //   observer.observe(table, config);
+      //   // const observer = new MutationObserver(callback);
+
+      function trim(str) {
+  return str.replace(/(^\s*)|(\s*$)/g, "");  
+}
+
+
+const noScanList = ['HEAD', 'STYLE', 'SCRIPT','INPUT','PATH','STYLE','IMG','META','TITLE','TEXTAREA']
+
+function getTextDom(el) {
+  let index = 0
+  let staticDocument = []
+  function extractDocument(el) {
+    var childNodes = el.childNodes;
+    for (var i = 0; i < childNodes.length; i ++) {
+        var c = childNodes[i];
+        switch(c.nodeType) {
+          case 1:
+            if(!noScanList.includes(c.nodeName)) {
+              // console.log('c.nodeName', c.nodeName)
+              extractDocument(c);
+            };
+            break;
+          case 3:
+            if (trim(c.nodeValue).length == 0) break;
+            handleNode(c, staticDocument, index)
+            break;
+        }
+    }
+  }
+  extractDocument(el)
+  return staticDocument
+}
+
+const  desensitizationFieldSettings = [{alias: "Address,电子邮箱,qq邮箱", type: 4}]
+
+
+function getNeedVagueTableDom(table, desensitizationFieldSettings) {
+  let tr = table.rows
+  let list = []
+  // 需要有表头，也有表体
+  if (tr.length > 1) {
+    // 遍历表头
+    for (let j = 0; j < tr[0].cells.length; j++) {
+      const headerDoms = getTextDom(tr[0].cells[j])
+      for (let headerDom of headerDoms) {
+        const result = desensitizationFieldSettings.find(li => {
+          if (li.alias && li.alias.split(',').includes(headerDom.toBeMatchedText)) {
+            return true
+          }
+          return false
+        })
+        const type = result?.type
+        if (type) {
+          // table表头match
+          const staticDocument = getTableNode(tr, j, type)
+          list = [...list, ...staticDocument]
+        }
+      }
+    }
+  }
+  return list
+}
+
+function getTableNode(tr, j, type) {
+  let staticDocument = []
+  for(let i = 1; i < tr.length; i++) {
+    // 遍历表体
+    const headerDoms = getTextDom(tr[i].cells[j])
+    staticDocument = [...staticDocument, ...headerDoms.map(li => {
+      return {
+        forwords: li,
+        originalWords: [{
+          w: li.toBeMatchedText,
+          t: type
+        }],
+        contentsData: li.toBeMatchedText
+      }
+    })]
+  }
+  return staticDocument
+}
+      window.onload = function () {
+        // const tables = document.getElementsByTagName('table')
+        // const staticDocument = getNeedVagueTableDom(tables[0], desensitizationFieldSettings)
+        // console.log(staticDocument)
+        // for (let i = 0; i < tables.length; i++) {
+        //   const table = tables[i]
+        //   let tr = table.rows
+        //   // 有表头，也有表体
+        //   if (tr.length > 1) {
+        //     // 遍历表头
+        //     for (j = 0; j < tr[0].cells.length; j++) {
+        //       console.log('tr[0]', tr[0].cells[j])
+        //       extractDocument(tr[0].cells[j])
+        //     }
+        //   }
+        // }
+      }
+    </script>
+  </body>
+</html>
