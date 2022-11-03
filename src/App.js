@@ -1,25 +1,46 @@
 import './App.css';
 import React, { useEffect, useState } from "react";
 
-import { Space, Table, Tag } from 'antd';
+import { Space, Table, Tag, Form, Input, Button } from 'antd';
 import { parse } from 'marked';
+const { TextArea } = Input;
 
 const columns = [
   {
     title: '营业执照',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'business',
+    key: 'business',
     render: text => <a>{text}</a>,
   },
   {
     title: '银行卡号',
-    dataIndex: 'age',
-    key: 'age',
+    dataIndex: 'card',
+    key: 'card',
   },
   {
     title: '地址',
     dataIndex: 'address',
     key: 'address',
+  },
+  {
+    title: '手机号',
+    dataIndex: 'mobile',
+    key: 'mobile',
+  },
+  {
+    title: '固定电话',
+    dataIndex: 'phone',
+    key: 'phone',
+  },
+  {
+    title: '身份证',
+    dataIndex: 'idcard',
+    key: 'idcard',
+  },
+  {
+    title: '电子邮箱',
+    dataIndex: 'email',
+    key: 'email',
   },
   {
     title: '客户名称',
@@ -41,41 +62,9 @@ const columns = [
       </>
     ),
   },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        <a>Invite {record.name}</a>
-        <a>Delete</a>
-      </Space>
-    ),
-  },
 ];
 
-const data = [
-  {
-    key: '1',
-    name: '510030200123456124117004186056214',
-    age: '137691748506217003860010905220',
-    address: 'New York No. 1 Lake Park',
-    tags: ['陈盼', '李登权'],
-  },
-  {
-    key: '2',
-    name: '510030200123456124117004186056214',
-    age: '137197700716212263602118776830',
-    address: 'London No. 1 Lake Park',
-    tags: ['李小姐'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-];
+const data = [{key:"1",business:"510030200123456124117004186056214",card:"137691748506217003860010905220",address:"New York No. 1 Lake Park",tags:["陈盼","李登权"]},{key:"2",business:"510030200123456124117004186056214",card:"137197700716212263602118776830",address:"London No. 1 Lake Park",tags:["李小姐"]},{key:"3",card:"Joe Black",business:32,address:"Sidney No. 1 Lake Park",tags:["cool","teacher"]}];
 
 const styles = {
   img: {
@@ -99,15 +88,37 @@ const styles = {
 }
 
 function App() {
-  const [newdata, setData] = useState([]);
+  const [inputList, setNameInput] = useState([]);
+  const [headerList, setHeaderInput] = useState(columns);
+  const [resourceList, setResourceInput] = useState([]);
+  const [form] = Form.useForm();
   useEffect(() => {
     setTimeout(() => {
-      setData(data)
-    }, 10000)
+      const cpInput = localStorage.getItem('cp_input')
+      if (cpInput) {
+        setNameInput(JSON.parse(cpInput))
+      }
+      // const cpHeader = localStorage.getItem('cp_header')
+      // if (cpHeader) {
+      //   console.log('header', JSON.parse(cpHeader))
+      //   setHeaderInput(JSON.parse(cpHeader))
+      // }
+      const cpResouce = localStorage.getItem('cp_resouce')
+      if (cpResouce) {
+        setResourceInput(JSON.parse(cpResouce))
+        form.setFieldsValue({
+          resource: cpResouce
+        })
+      } else {
+        setResourceInput(data)
+        form.setFieldsValue({
+          resource: JSON.stringify(data)
+        })
+      }
+    }, 2000)
   }, [])
   const createMarkup = () => {
     return {__html: parse(`
-    
 李淑芬 410102199003071310、河北省安阳市金山屯区宝山路32号真新六街坊、021-6258000、
 吴威德 350781196403077349、广东省安顺市南岔区安远路195号爱里舍花园、0551-4422984
 王圣义、350781196403077445、贵州省安顺市平坝区贵发小区公共服务站、0552-6026886
@@ -257,15 +268,79 @@ Shift + Enter 换行
 
 `)};
   }
+
+  const onFinish = (values) => {
+    console.log('Success:', values);
+    const cpInput = localStorage.getItem('cp_input') || '[]'
+    const jsonCpInput = JSON.parse(cpInput);
+    if (values.name) {
+      jsonCpInput.push({
+        name: values.name
+      })
+    }
+    localStorage.setItem('cp_input', JSON.stringify(jsonCpInput));
+  };
+  const onFinishtable = (values) => {
+    console.log('values.resource', values.resource)
+    localStorage.setItem('cp_resouce', values.resource);
+  };
+
   return (
     <div style={styles.authority}>
       <div>
-        12312
+      <Form
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        autoComplete="off"
+      >
+        <Form.Item
+          label="输入项"
+          name="name"
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            保存后刷新
+          </Button>
+        </Form.Item>
+      </Form>
+      <div>
+        下面的是输入项生成的
+        {
+          inputList.map(li => (
+            <div key={li.name}>{ li.name }</div>
+          ))
+        }
       </div>
-      <Table columns={columns} dataSource={newdata} />
-      <div style={{paddingBottom: '100px'}}>
       </div>
       <div dangerouslySetInnerHTML={createMarkup()} />
+      <div style={{paddingBottom: '100px'}}>
+      </div>
+      <Form
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        onFinish={onFinishtable}
+        autoComplete="off"
+        form={form}
+      >
+        <Form.Item
+          label="表格内容"
+          name="resource"
+        >
+          <TextArea/>
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            保存后刷新
+          </Button>
+        </Form.Item>
+      </Form>
+      <Table columns={headerList} dataSource={resourceList} />
     </div>
   );
 }
