@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useEffect, useState } from "react";
 
-import { Space, Table, Tag, Form, Input, Button } from 'antd';
+import { Space, Table, Tag, Form, Input, Button, Tooltip, Modal } from 'antd';
 import { parse } from 'marked';
 const { TextArea } = Input;
 
@@ -64,6 +64,34 @@ const columns = [
   },
 ];
 
+const headerList1 = [
+  {
+    title: '姓名',
+    dataIndex: 'business',
+    key: 'business',
+    // render: (text, record, index) => {
+    //   return <Tooltip placement="top" title={text}>
+    //   { text }
+    // </Tooltip>
+    // }
+  }
+]
+
+const resourceList1 = [
+  {
+    business:"王明",
+  },
+  {
+    business:"陈小姐"
+  },
+  {
+    business:"王明"
+  },
+  {
+    business:"王明"
+  },
+];
+
 const data = [{key:"1",business:"510030200123456124117004186056214",card:"137691748506217003860010905220",address:"New York No. 1 Lake Park",tags:["陈盼","李登权"]},{key:"2",business:"510030200123456124117004186056214",card:"137197700716212263602118776830",address:"London No. 1 Lake Park",tags:["李小姐"]},{key:"3",card:"Joe Black",business:32,address:"Sidney No. 1 Lake Park",tags:["cool","teacher"]}];
 
 const styles = {
@@ -91,6 +119,20 @@ function App() {
   const [inputList, setNameInput] = useState([]);
   const [headerList, setHeaderInput] = useState(columns);
   const [resourceList, setResourceInput] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const [form] = Form.useForm();
   useEffect(() => {
     setTimeout(() => {
@@ -287,6 +329,25 @@ Shift + Enter 换行
 
   return (
     <div style={styles.authority}>
+      <Button type="primary" onClick={showModal}>Primary Button</Button>
+      <Modal title="陈盼测试密码二次填充" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your password!',
+            },
+          ]}
+        >
+          <Input.Password id="basic_password" />
+        </Form.Item>
+      </Modal>
+      <Table columns={headerList1} rowKey="index" dataSource={resourceList1} pagination={{
+        pageSize: 2
+      }} />
+
       <div>
       <Form
         name="basic"

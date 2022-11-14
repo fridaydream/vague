@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom/client';
 import 'antd/dist/antd.min.css'
 import './index.css';
 import App from './App';
-import Table from './table2';
+import Router from './router';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
-    <App />
-    {/* <Table /> */}
+    <Router />
   </>
 );
 
