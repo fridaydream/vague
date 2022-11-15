@@ -115,52 +115,7 @@ const styles = {
   }
 }
 
-function App() {
-  const [inputList, setNameInput] = useState([]);
-  const [headerList, setHeaderInput] = useState(columns);
-  const [resourceList, setResourceInput] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const [form] = Form.useForm();
-  useEffect(() => {
-    setTimeout(() => {
-      const cpInput = localStorage.getItem('cp_input')
-      if (cpInput) {
-        setNameInput(JSON.parse(cpInput))
-      }
-      // const cpHeader = localStorage.getItem('cp_header')
-      // if (cpHeader) {
-      //   console.log('header', JSON.parse(cpHeader))
-      //   setHeaderInput(JSON.parse(cpHeader))
-      // }
-      const cpResouce = localStorage.getItem('cp_resouce')
-      if (cpResouce) {
-        setResourceInput(JSON.parse(cpResouce))
-        form.setFieldsValue({
-          resource: cpResouce
-        })
-      } else {
-        setResourceInput(data)
-        form.setFieldsValue({
-          resource: JSON.stringify(data)
-        })
-      }
-    }, 2000)
-  }, [])
-  const createMarkup = () => {
-    return {__html: parse(`
+const markup = {__html: parse(`
 李淑芬 410102199003071310、河北省安阳市金山屯区宝山路32号真新六街坊、021-6258000、
 吴威德 350781196403077349、广东省安顺市南岔区安远路195号爱里舍花园、0551-4422984
 王圣义、350781196403077445、贵州省安顺市平坝区贵发小区公共服务站、0552-6026886
@@ -308,8 +263,52 @@ Shift + Enter 换行
 台胞证号码:0099730503(B)
 台胞证号码:0099710503(B)
 
-`)};
-  }
+`)}
+function App() {
+  const [inputList, setNameInput] = useState([]);
+  const [headerList, setHeaderInput] = useState(columns);
+  const [resourceList, setResourceInput] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [createMarkup, setCreateMarkup] = useState(markup)
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const [form] = Form.useForm();
+  useEffect(() => {
+    setTimeout(() => {
+      const cpInput = localStorage.getItem('cp_input')
+      if (cpInput) {
+        setNameInput(JSON.parse(cpInput))
+      }
+      // const cpHeader = localStorage.getItem('cp_header')
+      // if (cpHeader) {
+      //   console.log('header', JSON.parse(cpHeader))
+      //   setHeaderInput(JSON.parse(cpHeader))
+      // }
+      const cpResouce = localStorage.getItem('cp_resouce')
+      if (cpResouce) {
+        setResourceInput(JSON.parse(cpResouce))
+        form.setFieldsValue({
+          resource: cpResouce
+        })
+      } else {
+        setResourceInput(data)
+        form.setFieldsValue({
+          resource: JSON.stringify(data)
+        })
+      }
+    }, 2000)
+  }, [])
 
   const onFinish = (values) => {
     console.log('Success:', values);
@@ -378,7 +377,7 @@ Shift + Enter 换行
         }
       </div>
       </div>
-      <div dangerouslySetInnerHTML={createMarkup()} />
+      <div dangerouslySetInnerHTML={createMarkup} />
       <div style={{paddingBottom: '100px'}}>
       </div>
       <Form
