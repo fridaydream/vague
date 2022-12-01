@@ -92,7 +92,46 @@ const resourceList1 = [
   },
 ];
 
-const data = [{key:"1",business:"510030200123456124117004186056214",card:"137691748506217003860010905220",address:"New York No. 1 Lake Park",tags:["陈盼","李登权"]},{key:"2",business:"510030200123456124117004186056214",card:"137197700716212263602118776830",address:"London No. 1 Lake Park",tags:["李小姐"]},{key:"3",card:"Joe Black",business:32,address:"Sidney No. 1 Lake Park",tags:["cool","teacher"]}];
+const data = [
+  {
+    "key": "1",
+    "business": "510030200123456124117004186056214",
+    "card": "137691748506217003860010905220",
+    "address": "New York No. 1 Lake Park",
+    "mobile": "17310740616",
+    "phone": "88123490",
+    "idcard": "33011419981010123-4(B)",
+    "tags": [
+      "陈盼",
+      "李登权"
+    ]
+  },
+  {
+    "key": "2",
+    "business": "510030200123456124117004186056214",
+    "card": "137197700716212263602118776830",
+    "address": "London No. 1 Lake Park",
+    "mobile": "173-1074-0616",
+    "phone": "010-7412340",
+    "idcard": "330114199810101234(B)",
+    "tags": [
+      "李小姐"
+    ]
+  },
+  {
+    "key": "3",
+    "card": "Joe Black",
+    "business": 32,
+    "address": "Sidney No. 1 Lake Park",
+    "mobile": "1731-074-0616",
+    "phone": "4006-8899-23",
+    "idcard": "330114199810101234",
+    "tags": [
+      "cool",
+      "teacher"
+    ]
+  }
+];
 
 const styles = {
   img: {

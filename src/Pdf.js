@@ -51,7 +51,7 @@ const Pdf = () => {
   const modifyPdf = async () => {
     const url = 'http://localhost:3000/pdf-lib_modification_example3.pdf'
     const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
-  
+    console.log('existingPdfBytes', existingPdfBytes)
     const pdfDoc = await PDFDocument.load(existingPdfBytes)
     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
   
