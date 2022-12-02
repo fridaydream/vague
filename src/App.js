@@ -33,7 +33,7 @@ const columns = [
     key: 'phone',
   },
   {
-    title: '身份证',
+    title: '身份证号',
     dataIndex: 'idcard',
     key: 'idcard',
   },
