@@ -367,6 +367,27 @@ function App() {
 
   return (
     <div style={styles.authority}>
+      <Form
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        onFinish={onFinishtable}
+        autoComplete="off"
+        form={form}
+      >
+        <Form.Item
+          label="表格内容"
+          name="resource"
+        >
+          <TextArea/>
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            保存后刷新
+          </Button>
+        </Form.Item>
+      </Form>
+      <Table scroll={{ y: 140 }} columns={headerList} dataSource={resourceList} />
       <Button type="primary" onClick={showModal}>Primary Button</Button>
       <Modal title="陈盼测试密码二次填充" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <Form.Item
@@ -382,6 +403,8 @@ function App() {
           <Input.Password id="basic_password" />
         </Form.Item>
       </Modal>
+      
+
       <Table columns={headerList1} rowKey="index" dataSource={resourceList1} pagination={{
         pageSize: 2
       }} />
@@ -419,27 +442,7 @@ function App() {
       <div dangerouslySetInnerHTML={createMarkup} />
       <div style={{paddingBottom: '100px'}}>
       </div>
-      <Form
-        name="basic"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        onFinish={onFinishtable}
-        autoComplete="off"
-        form={form}
-      >
-        <Form.Item
-          label="表格内容"
-          name="resource"
-        >
-          <TextArea/>
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            保存后刷新
-          </Button>
-        </Form.Item>
-      </Form>
-      <Table columns={headerList} dataSource={resourceList} />
+      
     </div>
   );
 }
